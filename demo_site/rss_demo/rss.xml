@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss version="2.0">
+
+    <channel>
+
+        <title>RSS Competitor Demo</title>
+
+        <link>
+            http://127.0.0.1:8003/
+        </link>
+
+        <description>
+            Demo RSS feed for Competitor Blog Spy
+        </description>
+
+        <item>
+
+            <title>
+                First RSS Demo Article
+            </title>
+
+            <link>
+                http://127.0.0.1:8003/rss-article-1.html
+            </link>
+
+            <description>
+                First article published through the RSS demo feed.
+            </description>
+
+            <author>
+                demo@example.com (RSS Demo Author)
+            </author>
+
+            <pubDate>
+                Sun, 04 Oct 2026 14:48:41 GMT
+            </pubDate>
+
+        </item>
+
+        <item>
+
+            <title>
+                Fresh RSS Detection Test Article
+            </title>
+
+            <link>
+                http://127.0.0.1:8003/rss-article-2.html
+            </link>
+
+            <description>
+                Fresh article created for controlled RSS detection-delay testing.
+            </description>
+
+            <author>
+                demo@example.com (RSS Test Author)
+            </author>
+
+            <pubDate>
+                Sun, 04 Oct 2026 14:56:42 GMT
+            </pubDate>
+
+        </item>
+
+    </channel>
+
+</rss>

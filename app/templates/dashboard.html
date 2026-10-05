@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitor Blog Spy</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 24px 32px;
+        }
+
+        .header h1 {
+            margin: 0 0 6px 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #d1d5db;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .status-bar {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #16a34a;
+        }
+
+        .last-updated {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 22px;
+        }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-strategy {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .article-title {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .article-link {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .article-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty {
+            padding: 24px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .status-bar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <h1>Competitor Blog Spy</h1>
+    <p>Real-time competitor content monitoring dashboard</p>
+</header>
+
+<main class="container">
+
+    <div class="status-bar">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>Monitoring System Active</span>
+        </div>
+
+        <div class="last-updated">
+            Dashboard data is loaded from the monitoring database.
+        </div>
+    </div>
+
+    <section class="cards">
+
+        <div class="card">
+            <div class="card-title">Active Websites</div>
+            <div class="card-value">{{ stats.active_websites }}</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Successful Checks</div>
+            <div class="card-value">{{ stats.successful_checks }}</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Failed Checks</div>
+            <div class="card-value">{{ stats.failed_checks }}</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Articles Detected</div>
+            <div class="card-value">{{ stats.articles_detected }}</div>
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <div class="section-header">
+            <h2>Detection Statistics</h2>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <tbody>
+
+                    <tr>
+                        <th>Average Detection Delay</th>
+                        <td>
+                            {% if stats.average_detection_delay is not none %}
+                                {{ "%.2f"|format(stats.average_detection_delay) }} seconds
+                            {% else %}
+                                No detection-delay data available
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Fastest Detection</th>
+                        <td>
+                            {% if stats.fastest_detection_delay is not none %}
+                                {{ "%.2f"|format(stats.fastest_detection_delay) }} seconds
+                            {% else %}
+                                No detection-delay data available
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Slowest Detection</th>
+                        <td>
+                            {% if stats.slowest_detection_delay is not none %}
+                                {{ "%.2f"|format(stats.slowest_detection_delay) }} seconds
+                            {% else %}
+                                No detection-delay data available
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Total Monitoring Checks</th>
+                        <td>{{ stats.total_checks }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>New Articles Detected</th>
+                        <td>{{ stats.new_articles }}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <div class="section-header">
+            <h2>Latest Detected Articles</h2>
+        </div>
+
+        <div class="table-wrapper">
+
+            {% if latest_articles %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Article</th>
+                        <th>Competitor</th>
+                        <th>Publication Time</th>
+                        <th>First Discovered</th>
+                        <th>Detection Delay</th>
+                        <th>Method</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for article in latest_articles %}
+
+                    <tr>
+
+                        <td>
+                            <a
+                                class="article-link article-title"
+                                href="{{ article.url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {{ article.title }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ article.website_name }}
+                        </td>
+
+                        <td>
+                            {% if article.published_at %}
+                                {{ article.published_at }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ article.detected_at }}
+                        </td>
+
+                        <td>
+                            {% if article.detection_delay_seconds is not none %}
+                                {{ "%.2f"|format(article.detection_delay_seconds) }} seconds
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="badge badge-strategy">
+                                {{ article.strategy }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+                <div class="empty">
+                    No articles have been detected yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <div class="section-header">
+            <h2>Website Monitoring Status</h2>
+        </div>
+
+        <div class="table-wrapper">
+
+            {% if websites %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Website</th>
+                        <th>Strategy</th>
+                        <th>URL</th>
+                        <th>Last Checked</th>
+                        <th>Last Successful Check</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for website in websites %}
+
+                    <tr>
+
+                        <td>{{ website.name }}</td>
+
+                        <td>
+                            <span class="badge badge-strategy">
+                                {{ website.strategy }}
+                            </span>
+                        </td>
+
+                        <td>{{ website.url }}</td>
+
+                        <td>
+                            {% if website.last_checked_at %}
+                                {{ website.last_checked_at }}
+                            {% else %}
+                                Never
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if website.last_success_at %}
+                                {{ website.last_success_at }}
+                            {% else %}
+                                Never
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            {% if website.last_error %}
+
+                                <span class="badge badge-failed">
+                                    Failed
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-success">
+                                    Healthy
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+            {% else %}
+
+                <div class="empty">
+                    No active websites are currently configured.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <div class="section-header">
+            <h2>Recent Monitoring Checks</h2>
+        </div>
+
+        <div class="table-wrapper">
+
+            {% if recent_checks %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Website</th>
+                        <th>Checked At</th>
+                        <th>Strategy</th>
+                        <th>Articles Found</th>
+                        <th>New Articles</th>
+                        <th>Response Time</th>
+                        <th>Status</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for check in recent_checks %}
+
+                    <tr>
+
+                        <td>{{ check.website_name }}</td>
+
+                        <td>{{ check.checked_at }}</td>
+
+                        <td>
+                            <span class="badge badge-strategy">
+                                {{ check.strategy_used }}
+                            </span>
+                        </td>
+
+                        <td>{{ check.articles_found }}</td>
+
+                        <td>{{ check.new_articles }}</td>
+
+                        <td>
+                            {% if check.response_time_ms is not none %}
+                                {{ "%.2f"|format(check.response_time_ms) }} ms
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            {% if check.success %}
+
+                                <span class="badge badge-success">
+                                    Success
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-failed">
+                                    Failed
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {% if check.error_message %}
+                                {{ check.error_message }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+                <div class="empty">
+                    No monitoring checks have been recorded yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
